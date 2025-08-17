@@ -1,32 +1,28 @@
-name: Deploy Frontend
+name: Deploy NUC Stack
 
+# Dispara a action quando houver push na branch main
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
-  build-and-deploy:
+  deploy-frontend:
+    name: Deploy Frontend
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
+      - name: Deploy Frontend via SSH
+        uses: appleboy/ssh-action@v0.1.5
         with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run build
-
-      - name: Build Docker Image
-        run: docker build -t nuc_frontend:latest .
-
-      - name: Stop old container
-        run: docker stop nuc_frontend || true && docker rm nuc_frontend || true
-
-      - name: Run container
-        run: docker run -d --name nuc_frontend -p 3000:3000 nuc_frontend:latest
+          host: ${{ secrets.NUC_HOST }}
+          username: ${{ secrets.NUC_USER }}
+          key: ${{ secrets.NUC_SSH_KEY }}
+          script: |
+            echo "Atualizando frontend..."
+            cd /home/alpine/frontend
+            git pull
+            docker-compose -f /home/alpine/docker-compose.yml build frontend
+            docker-compose -f /home/alpine/docker-compose.yml up -d frontend
+            echo "Frontend atualizado!"

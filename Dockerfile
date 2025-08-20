@@ -15,22 +15,21 @@ RUN pnpm install --frozen-lockfile
 # Copia todo o projeto
 COPY . .
 
-# Build da aplicação
+# Build da aplicação em modo standalone
 RUN pnpm build
 
 # Etapa final: imagem de runtime
-FROM node:20-alpine
+FROM node:20-alpine AS runtime
 
 WORKDIR /app
 
-# Copia build e node_modules
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
+# Copia build standalone do Next.js
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
 # Porta que o Next.js vai expor
 EXPOSE 3000
 
-# Comando para rodar em produção
-CMD ["pnpm", "start"]
+# Comando para rodar em produção sem depender do pnpm
+CMD ["node", "server.js"]

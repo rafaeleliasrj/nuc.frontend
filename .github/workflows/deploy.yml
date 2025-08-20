@@ -1,6 +1,5 @@
 name: Deploy NUC Stack
 
-# Dispara a action quando houver push na branch main
 on:
   push:
     branches: [ main ]
@@ -22,7 +21,13 @@ jobs:
           script: |
             echo "Atualizando frontend..."
             cd /home/alpine/frontend
-            git pull
-            docker-compose -f /home/alpine/docker-compose.yml build frontend
+            git reset --hard HEAD        # garante que alterações locais não atrapalhem
+            git clean -fdx               # remove arquivos não rastreados
+            git pull origin main
+
+            # Força rebuild completo da imagem, ignorando cache
+            docker-compose -f /home/alpine/docker-compose.yml build --no-cache frontend
+
+            # Sobe o container atualizado
             docker-compose -f /home/alpine/docker-compose.yml up -d frontend
             echo "Frontend atualizado!"

@@ -3,25 +3,28 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copia package.json e package-lock.json
-COPY package*.json ./
+# Instala pnpm globalmente
+RUN npm install -g pnpm
 
-# Instala dependências
-RUN npm ci
+# Copia arquivos de dependência
+COPY package.json pnpm-lock.yaml ./
+
+# Instala dependências usando pnpm
+RUN pnpm install --frozen-lockfile
 
 # Copia todo o projeto
 COPY . .
 
 # Build da aplicação
-RUN npm run build
+RUN pnpm build
 
 # Etapa final: imagem de runtime
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Copia apenas o build final e node_modules
-COPY --from=builder /app/package*.json ./
+# Copia build e node_modules
+COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/public ./public
@@ -30,4 +33,4 @@ COPY --from=builder /app/public ./public
 EXPOSE 3000
 
 # Comando para rodar em produção
-CMD ["npm", "start"]
+CMD ["pnpm", "start"]

@@ -23,8 +23,8 @@ FROM node:20-alpine AS runtime
 
 WORKDIR /app
 
-# Instala dependências usando pnpm
-RUN pnpm install --frozen-lockfile
+# Instala pnpm globalmente
+RUN npm install -g pnpm
 
 # Copia build standalone do Next.js
 COPY --from=builder /app/.next/standalone ./

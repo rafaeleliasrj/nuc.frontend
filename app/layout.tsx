@@ -12,7 +12,7 @@ const roboto = Roboto({
 })
 
 export const metadata: Metadata = {
-  title: "Simplix - Sistema de Gestão de Vendas",
+  title: "Avvo - Sistema de Gestão de Vendas",
   description: "Sistema completo de gestão de vendas baseado no Material Design 3",
   generator: "v0.app",
 }

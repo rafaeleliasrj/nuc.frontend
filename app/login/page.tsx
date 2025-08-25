@@ -74,7 +74,7 @@ export default function LoginPage() {
               </svg>
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">GestãoFácil</CardTitle>
+          <CardTitle className="text-2xl font-bold"><strong>Avvo</strong>Tech</CardTitle>
           <CardDescription>Entre na sua conta para acessar o sistema</CardDescription>
         </CardHeader>
 

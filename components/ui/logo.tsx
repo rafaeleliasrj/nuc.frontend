@@ -47,7 +47,7 @@ export function Logo({ className, size = "md", showText = true }: LogoProps) {
       {showText && (
         <div className="flex flex-col">
           <span className={cn("font-bold text-foreground leading-none tracking-tight", textSizeClasses[size])}>
-            Simplix
+            <strong>Avvo</strong>Tech
           </span>
           {size !== "sm" && <span className="text-xs text-muted-foreground font-medium">Sistema de Gestão</span>}
         </div>
